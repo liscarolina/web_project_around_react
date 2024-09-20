@@ -29,22 +29,18 @@ function PopupWithForm(props) {
               onChange={props.onChangeInput}
             />
             <span className="popup__error popup__error-name"></span>
-            {props.inputSecond != null && (
-              <>
-                <input
-                  className="popup__item popup__item_type_about"
-                  type={props.inputSecond.type}
-                  name={props.inputSecond.name}
-                  placeholder={props.inputSecond.placeholder}
-                  value={props.inputSecond.value}
-                  required
-                  minLength="2"
-                  maxLength="200"
-                  onChange={props.onChangeInput}
-                />
-                <span className="popup__error popup__error-about"></span>
-              </>
-            )}
+            <input
+              className="popup__item popup__item_type_about"
+              type={props.inputSecond.type}
+              name={props.inputSecond.name}
+              placeholder={props.inputSecond.placeholder}
+              value={props.inputSecond.value}
+              required
+              minLength="2"
+              maxLength="200"
+              onChange={props.onChangeInput}
+            />
+            <span className="popup__error popup__error-about"></span>
             <button
               className="popup__button popup__button_type_send"
               type="submit"

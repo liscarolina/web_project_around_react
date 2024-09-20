@@ -1,17 +1,40 @@
+import { useEffect } from "react";
 import { useState } from "react";
 import "../src/blocks/Elements.css";
 import Header from "./components/Header.js";
 import Main from "./components/Main.js";
 import Footer from "./components/Footer.js";
 import PopupWithForm from "./components/PopupWithForm.js";
+import Popup from "./components/Popup.js";
+import api from "./utils/Api.js";
+import Card from "./components/Card.js";
 
 function App() {
+  const [initialCards, setInitialCards] = useState([]);
+  const [userInfo, setUserInfo] = useState({});
+  const [counter, setCounter] = useState(0);
+
+  useEffect(() => {
+    loadInfo();
+  }, []);
+
+  async function loadInfo() {
+    const userInfo = await api.getUserInfo();
+    const initialCards = await api.getInitialCards();
+    setUserInfo(userInfo);
+    setInitialCards(initialCards);
+  }
+
   const [profileState, setProfileState] = useState({
     name: "",
     about: "",
   });
-
-  const [popupIsOpened, setpopoupIsOpened] = useState(false);
+  const [profilePopupIsOpened, profileSetPopoupIsOpened] = useState(false);
+  const [addCardPopupIsOpened, addCardSetPopoupIsOpened] = useState(false);
+  const [editAvatarPopupIsOpened, editAvatarSetPopoupIsOpened] =
+    useState(false);
+  const [deleteCardPopupIsOpened, deleteCardSetPopoupIsOpened] =
+    useState(false);
 
   const handleOnChangeInput = (evt) => {
     setProfileState((state) => ({
@@ -20,21 +43,69 @@ function App() {
     }));
   };
 
-  const closeAllPopups = () => {
-    setpopoupIsOpened(false);
-  };
-
-  function onEditProfileClick() {
-    setpopoupIsOpened(true);
+  function onCounterCardClick() {
+    setCounter(counter + 1);
   }
 
-  //}
+  function onEditProfileClick() {
+    profileSetPopoupIsOpened(true);
+  }
+
+  function onEditProfileClose() {
+    profileSetPopoupIsOpened(false);
+  }
+
+  function onAddPlaceClick() {
+    addCardSetPopoupIsOpened(true);
+  }
+
+  function onAddPlaceClose() {
+    addCardSetPopoupIsOpened(false);
+  }
+
+  function onEditAvatarClick() {
+    editAvatarSetPopoupIsOpened(true);
+  }
+
+  function onEditAvatarClose() {
+    editAvatarSetPopoupIsOpened(false);
+  }
+
+  // function onDeleteCardClick() {
+  //   deleteCardSetPopoupIsOpened(true);
+  // }
+
+  function onDeleteCardClose() {
+    deleteCardSetPopoupIsOpened(false);
+  }
 
   return (
     <>
       <div className="page">
         <Header />
-        <Main handleEditProfileClick={onEditProfileClick} />
+        <Main
+          userName={userInfo.name}
+          userDescription={userInfo.about}
+          userAvatar={userInfo.avatar}
+          handleEditProfileClick={onEditProfileClick}
+          handleAddPlaceClick={onAddPlaceClick}
+          handleEditAvatarClick={onEditAvatarClick}
+          handleCardLike={onCounterCardClick}
+        >
+          <div className="elements__cards">
+            {initialCards.map((card) => {
+              return (
+                <Card
+                  cardName={card.name}
+                  cardImage={card.link}
+                  cardCounter={card.likes}
+                  key={card.owner._Id}
+                />
+              );
+            })}
+          </div>
+        </Main>
+
         <Footer />
         <PopupWithForm
           id="profile"
@@ -54,47 +125,58 @@ function App() {
           }}
           onChangeInput={handleOnChangeInput}
           onSubmit={() => null}
-          onClose={closeAllPopups}
-          isOpen={popupIsOpened}
+          onClose={onEditProfileClose}
+          isOpen={profilePopupIsOpened}
         />
-        {/* <PopupWithForm
+        <PopupWithForm
           id="add-popup"
           title="Nuevo Lugar"
           buttonName="Guardar"
           inputFirst={{
-            // type: "text",
+            type: "text",
             name: "place",
             placeholder: "Título",
-            value: profileState.name,
+            value: profileState.place,
           }}
           inputSecond={{
-            // type: "url",
+            type: "url",
             name: "link",
             placeholder: "Enlace a la imagen",
-            value: profileState.about,
+            value: profileState.link,
           }}
           onChangeInput={handleOnChangeInput}
           onSubmit={() => null}
-        /> */}
-        {/* <PopupWithForm
+          onClose={onAddPlaceClose}
+          isOpen={addCardPopupIsOpened}
+        />
+        <Popup
           id="delete-popup"
           title="¿Estás seguro/a?"
           buttonName="Sí"
           onSubmit={() => null}
-        /> */}
-        {/* <PopupWithForm
+          onClose={onDeleteCardClose}
+          isOpen={deleteCardPopupIsOpened}
+        />
+        <Popup
           id="avatar-popup"
           title="Cambiar foto de perfil"
           buttonName="Guardar"
-          inputFirst={{
-            type: "url",
-            name: "link",
-            placeholder: "Enlace a la imagen",
-            value: profileState.name,
-          }}
           onChangeInput={handleOnChangeInput}
           onSubmit={() => null}
-        /> */}
+          onClose={onEditAvatarClose}
+          isOpen={editAvatarPopupIsOpened}
+        >
+          <input
+            className="popup__item popup__item_type_about"
+            id="link-input"
+            type="url"
+            name="link"
+            placeholder="Enlace a la imagen"
+            value={profileState.link}
+            required
+          />
+          <span className="popup__error popup__error-link"></span>
+        </Popup>
 
         {/* <div className="popup" id="popup_image">
           <div className="popup__container popup__container-window">
@@ -115,163 +197,6 @@ function App() {
               alt="imagen del lugar"
             />
             <h3 className="popup__window-name"></h3>
-          </div>
-        </div>
-        <div className="popup" id="profile">
-          <div className="popup__container">
-            <button
-              className="popup__button popup__button_type_close"
-              type="button"
-            >
-              <img
-                className="popup__icon"
-                src="<%=require('./images/popup-close-icon.svg')%>"
-                alt="Cerrar"
-              />
-            </button>
-            <h2 className="popup__title">Editar Perfil</h2>
-            <form className="popup__form" autocomplete="off">
-              <fieldset className="popup__name">
-                <input
-                  className="popup__item popup__item_type_name"
-                  type="text"
-                  name="name"
-                  placeholder="Nombre"
-                  value=""
-                  required
-                  minlength="2"
-                  maxlength="40"
-                />
-                <span className="popup__error popup__error-name"></span>
-                <input
-                  className="popup__item popup__item_type_about"
-                  type="text"
-                  name="about"
-                  placeholder="Acerca de mí"
-                  value=""
-                  required
-                  minlength="2"
-                  maxlength="200"
-                />
-                <span className="popup__error popup__error-about"></span>
-                <button
-                  className="popup__button popup__button_type_send"
-                  type="submit"
-                >
-                  Guardar
-                </button>
-              </fieldset>
-            </form>
-          </div>
-        </div> */}
-        {/* <div className="popup" id="add-popup">
-          <div className="popup__container">
-            <button
-              className="popup__button popup__button_type_close"
-              type="button"
-              id="close-add-popup"
-            >
-              <img
-                className="popup__icon"
-                src="<%=require('./images/popup-close-icon.svg')%>"
-                alt="Cerrar"
-              />
-            </button>
-            <h2 className="popup__title">Nuevo Lugar</h2>
-            <form className="popup__form" id="add-form">
-              <fieldset className="popup__name">
-                <input
-                  className="popup__item popup__item_type_name"
-                  autocomplete="off"
-                  id="place-input"
-                  type="text"
-                  name="place"
-                  placeholder="Título"
-                  minlength="2"
-                  maxlength="30"
-                  required
-                />
-                <span className="popup__error popup__error-place"></span>
-                <input
-                  className="popup__item popup__item_type_about"
-                  id="link-input"
-                  type="url"
-                  name="link"
-                  placeholder="Enlace a la imagen"
-                  required
-                />
-                <span className="popup__error popup__error-link"></span>
-                <button
-                  className="popup__button popup__button_type_send"
-                  id="add-card-button"
-                  type="submit"
-                >
-                  Guardar
-                </button>
-              </fieldset>
-            </form>
-          </div>
-        </div> */}
-        {/* <div className="popup" id="delete-popup">
-          <div className="popup__container">
-            <button
-              className="popup__button popup__button_type_close"
-              type="button"
-            >
-              <img
-                className="popup__icon"
-                src="<%=require('./images/popup-close-icon.svg')%>"
-                alt="Cerrar"
-              />
-            </button>
-            <h2 className="popup__title popup__title-delete">
-              ¿Estás seguro/a?
-            </h2>
-            <button
-              className="popup__button popup__button_type_send"
-              type="submit"
-              id="delete-button"
-            >
-              Sí
-            </button>
-          </div>
-        </div> */}
-        {/* <div className="popup" id="avatar-popup">
-          <div className="popup__container">
-            <button
-              className="popup__button popup__button_type_close"
-              type="button"
-              id="close-add-popup"
-            >
-              <img
-                className="popup__icon"
-                src="<%=require('./images/popup-close-icon.svg')%>"
-                alt="Cerrar"
-              />
-            </button>
-            <h2 className="popup__title popup__title-profile-pic">
-              Cambiar foto de perfil
-            </h2>
-            <form className="popup__form" id="avatar-form">
-              <fieldset className="popup__name">
-                <input
-                  className="popup__item popup__item_type_about"
-                  id="link-input"
-                  type="url"
-                  name="link"
-                  placeholder="Enlace a la imagen"
-                  required
-                />
-                <span className="popup__error popup__error-link"></span>
-                <button
-                  className="popup__button popup__button_type_send"
-                  id="add-card-button"
-                  type="submit"
-                >
-                  Guardar
-                </button>
-              </fieldset>
-            </form>
           </div>
         </div> */}
       </div>

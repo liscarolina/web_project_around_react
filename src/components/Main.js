@@ -1,26 +1,18 @@
-import cousteau from "../images/avatar-image.jpg";
 import editProfileButtonLayover from "../images/edit-profile.svg";
 import editProfileButtonIcon from "../images/profile-edit-button.svg";
 import addCardButtonIcon from "../images/profile-add-button.svg";
 
 function Main(props) {
-  // handleEditAvatarClick(){};
-  // handleAddPlaceClick(){}
-  /*
-  function handleEditProfileClick() {
-    const editProfilePopup = document.querySelector("#profile");
-    editProfilePopup.classList.add("popup_opened");
-  }
-    */
-
   return (
     <main className="content">
       <section className="profile">
         <div className="profile__content">
           <img
             className="profile__avatar"
-            src={cousteau}
+            src=""
             alt="Imagen de Jacques Costeau"
+            onClick={props.handleEditAvatarClick}
+            style={{ backgroundImage: `url(${props.userAvatar})` }}
           />
           <img
             className="profile__layover"
@@ -28,15 +20,14 @@ function Main(props) {
             alt="Editar"
           />
           <div className="profile__info">
-            <h1 className="profile__name">Jacques Costeau</h1>
-            <h2 className="profile__description">Explorador</h2>
+            <h1 className="profile__name">{props.userName}</h1>
+            <h2 className="profile__description">{props.userDescription}</h2>
           </div>
           <button
             className="profile__button profile__button_type_edit"
             type="button"
             id="edit-button"
             onClick={props.handleEditProfileClick}
-            // onClick={setpopoupIsOpened}
           >
             <img
               className="profile__icon profile__icon_type_edit"
@@ -49,6 +40,7 @@ function Main(props) {
           className="profile__button profile__button_type_add"
           type="button"
           id="add-button"
+          onClick={props.handleAddPlaceClick}
         >
           <img
             className="profile__icon profile__icon_type_add"
@@ -58,7 +50,8 @@ function Main(props) {
         </button>
       </section>
       <section className="elements">
-        <div className="elements__cards">
+        {props.children}
+        {/* <div className="elements__cards">
           <template className="elements__template">
             <div className="elements__card">
               <img className="elements__image" src=" " alt="boton de cerrado" />
@@ -95,7 +88,7 @@ function Main(props) {
               </div>
             </div>
           </template>
-        </div>
+        </div> */}
       </section>
     </main>
   );
