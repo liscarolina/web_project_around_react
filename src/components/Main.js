@@ -9,10 +9,10 @@ function Main(props) {
         <div className="profile__content">
           <img
             className="profile__avatar"
-            src=""
+            src={props.userAvatar}
             alt="Imagen de Jacques Costeau"
             onClick={props.handleEditAvatarClick}
-            style={{ backgroundImage: `url(${props.userAvatar})` }}
+            // style={{ backgroundImage: `url(${props.userAvatar})` }}
           />
           <img
             className="profile__layover"

@@ -8,11 +8,16 @@ import PopupWithForm from "./components/PopupWithForm.js";
 import Popup from "./components/Popup.js";
 import api from "./utils/Api.js";
 import Card from "./components/Card.js";
+import ImagePopup from "./components/ImagePopup.js";
 
 function App() {
   const [initialCards, setInitialCards] = useState([]);
   const [userInfo, setUserInfo] = useState({});
-  const [counter, setCounter] = useState(0);
+  const [currentCard, setCurrentCard] = useState({
+    name: "",
+    link: "",
+  });
+  // const [counter, setCounter] = useState(0);
 
   useEffect(() => {
     loadInfo();
@@ -35,6 +40,7 @@ function App() {
     useState(false);
   const [deleteCardPopupIsOpened, deleteCardSetPopoupIsOpened] =
     useState(false);
+  const [imageCardPopupIsOpened, imageCardSetPopoupIsOpened] = useState(false);
 
   const handleOnChangeInput = (evt) => {
     setProfileState((state) => ({
@@ -43,40 +49,37 @@ function App() {
     }));
   };
 
-  function onCounterCardClick() {
-    setCounter(counter + 1);
-  }
+  // function onCounterCardClick() {
+  //   setCounter(counter + 1);
+  // }
 
   function onEditProfileClick() {
     profileSetPopoupIsOpened(true);
-  }
-
-  function onEditProfileClose() {
-    profileSetPopoupIsOpened(false);
   }
 
   function onAddPlaceClick() {
     addCardSetPopoupIsOpened(true);
   }
 
-  function onAddPlaceClose() {
-    addCardSetPopoupIsOpened(false);
-  }
-
   function onEditAvatarClick() {
     editAvatarSetPopoupIsOpened(true);
   }
 
-  function onEditAvatarClose() {
-    editAvatarSetPopoupIsOpened(false);
+  function onDeleteCardClick() {
+    deleteCardSetPopoupIsOpened(true);
   }
 
-  // function onDeleteCardClick() {
-  //   deleteCardSetPopoupIsOpened(true);
-  // }
+  function onImageCardClick(name, link) {
+    imageCardSetPopoupIsOpened(true);
+    setCurrentCard({ name, link });
+  }
 
-  function onDeleteCardClose() {
+  function closeAllPopups() {
+    imageCardSetPopoupIsOpened(false);
     deleteCardSetPopoupIsOpened(false);
+    profileSetPopoupIsOpened(false);
+    editAvatarSetPopoupIsOpened(false);
+    addCardSetPopoupIsOpened(false);
   }
 
   return (
@@ -90,7 +93,6 @@ function App() {
           handleEditProfileClick={onEditProfileClick}
           handleAddPlaceClick={onAddPlaceClick}
           handleEditAvatarClick={onEditAvatarClick}
-          handleCardLike={onCounterCardClick}
         >
           <div className="elements__cards">
             {initialCards.map((card) => {
@@ -98,14 +100,16 @@ function App() {
                 <Card
                   cardName={card.name}
                   cardImage={card.link}
-                  cardCounter={card.likes}
-                  key={card.owner._Id}
-                />
+                  cardCounter={card.likes.length}
+                  Key={card._id}
+                  handleDeleteCard={onDeleteCardClick}
+                  handleCardClick={onImageCardClick}
+                  // handleCardLike={onCounterCardClick}
+                ></Card>
               );
             })}
           </div>
         </Main>
-
         <Footer />
         <PopupWithForm
           id="profile"
@@ -125,7 +129,7 @@ function App() {
           }}
           onChangeInput={handleOnChangeInput}
           onSubmit={() => null}
-          onClose={onEditProfileClose}
+          onClose={closeAllPopups}
           isOpen={profilePopupIsOpened}
         />
         <PopupWithForm
@@ -146,7 +150,7 @@ function App() {
           }}
           onChangeInput={handleOnChangeInput}
           onSubmit={() => null}
-          onClose={onAddPlaceClose}
+          onClose={closeAllPopups}
           isOpen={addCardPopupIsOpened}
         />
         <Popup
@@ -154,7 +158,7 @@ function App() {
           title="¿Estás seguro/a?"
           buttonName="Sí"
           onSubmit={() => null}
-          onClose={onDeleteCardClose}
+          onClose={closeAllPopups}
           isOpen={deleteCardPopupIsOpened}
         />
         <Popup
@@ -163,7 +167,7 @@ function App() {
           buttonName="Guardar"
           onChangeInput={handleOnChangeInput}
           onSubmit={() => null}
-          onClose={onEditAvatarClose}
+          onClose={closeAllPopups}
           isOpen={editAvatarPopupIsOpened}
         >
           <input
@@ -177,28 +181,13 @@ function App() {
           />
           <span className="popup__error popup__error-link"></span>
         </Popup>
-
-        {/* <div className="popup" id="popup_image">
-          <div className="popup__container popup__container-window">
-            <button
-              className="popup__button popup__button_type_close"
-              type="button"
-              id="window-close-button"
-            >
-              <img
-                className="popup__icon popup__icon_type_close"
-                src="<%=require('./images/popup-close-icon.svg')%>"
-                alt="Cerrar"
-              />
-            </button>
-            <img
-              className="popup__window-image"
-              src=" "
-              alt="imagen del lugar"
-            />
-            <h3 className="popup__window-name"></h3>
-          </div>
-        </div> */}
+        <ImagePopup
+          id="popup_image"
+          name={currentCard.name}
+          link={currentCard.link}
+          isOpen={imageCardPopupIsOpened}
+          onClose={closeAllPopups}
+        />
       </div>
     </>
   );
