@@ -1,6 +1,5 @@
-import trashCap from "../images/trashcap.svg";
-import trashCan from "../images/trashcan.svg";
 import likeButton from "../images/like.svg";
+import trash from "../images/trash.svg";
 
 function Card(props) {
   console.log(props);
@@ -21,12 +20,7 @@ function Card(props) {
       >
         <img
           className="elements__icon elements__icon_type_trash-cap"
-          src={trashCap}
-          alt="Botón de eliminar"
-        />
-        <img
-          className="elements__icon elements__icon_type_trash-can"
-          src={trashCan}
+          src={trash}
           alt="Botón de eliminar"
         />
       </button>
