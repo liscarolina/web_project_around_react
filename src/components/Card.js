@@ -1,20 +1,26 @@
+import React from "react";
 import likeButton from "../images/like.svg";
 import trash from "../images/trash.svg";
+import CurrentUserContext from "./contexts/CurrentUserContext";
 
 function Card(props) {
-  console.log(props);
+  const CurrentUser = React.useContext(CurrentUserContext);
+  const isOwn = props.cardOwnerId === CurrentUser._id;
+  const isLiked = props.cardLikes.some((i) => i._id === CurrentUser._id);
+  const cardLikeButtonClassName = `.elements__button_type_like-active`;
   return (
     <div className="elements__card">
       <img
         className="elements__image"
         src={props.cardImage}
         alt="boton de cerrado"
-        // style={{ backgroundImage: `url(${props.cardImage})` }}
         onClick={() => props.handleCardClick(props.cardName, props.cardImage)}
       />
 
       <button
-        className="elements__button elements__button_type_trash"
+        className={`elements__button elements__button_type_trash ${
+          isOwn ? "" : "elements__button_type_trash_inactive"
+        }`}
         type="button"
         onClick={props.handleDeleteCard}
       >
@@ -30,7 +36,7 @@ function Card(props) {
           <button
             className="elements__button elements__button_type_like"
             type="button"
-            // onClick={props.handleCardLike}
+            onClick={props.handleCardLike}
           >
             <img
               className="elements__icon elements__icon_type_like-icon"

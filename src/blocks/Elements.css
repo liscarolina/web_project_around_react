@@ -42,6 +42,10 @@
   cursor: pointer;
 }
 
+.elements__button_type_trash_inactive {
+  display: none;
+}
+
 .elements__button_type_trash:hover {
   opacity: 60%;
 }
