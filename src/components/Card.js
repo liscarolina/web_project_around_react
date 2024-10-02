@@ -7,7 +7,7 @@ function Card(props) {
   const CurrentUser = React.useContext(CurrentUserContext);
   const isOwn = props.cardOwnerId === CurrentUser._id;
   const isLiked = props.cardLikes.some((i) => i._id === CurrentUser._id);
-  const cardLikeButtonClassName = `.elements__button_type_like-active`;
+
   return (
     <div className="elements__card">
       <img
@@ -22,7 +22,10 @@ function Card(props) {
           isOwn ? "" : "elements__button_type_trash_inactive"
         }`}
         type="button"
-        onClick={props.handleDeleteCard}
+        // onClick={props.handleDeleteClick}
+        onClick={() => {
+          props.handleCardDelete(props.card);
+        }}
       >
         <img
           className="elements__icon elements__icon_type_trash-cap"
@@ -34,9 +37,13 @@ function Card(props) {
         <h3 className="elements__text">{props.cardName}</h3>
         <div>
           <button
-            className="elements__button elements__button_type_like"
+            className={`elements__button elements__button_type_like ${
+              isLiked ? "elements__button_type_like-active" : ""
+            }`}
             type="button"
-            onClick={props.handleCardLike}
+            onClick={() => {
+              props.handleCardLike(props.card);
+            }}
           >
             <img
               className="elements__icon elements__icon_type_like-icon"

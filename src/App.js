@@ -84,12 +84,20 @@ function App() {
     addCardSetPopoupIsOpened(false);
   }
 
-  const CurrentUser = React.useContext(CurrentUserContext);
-
   function onCardLike(card) {
-    const isLiked = card.Likes.some((i) => i._id === CurrentUser._id);
-    api.addCardLike(card._id, !isLiked).then((newCard) => {
-      setCards((state) => state.map((c) => (c._id === card._id ? newCard : c)));
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    api.handleCardLike(card._id, isLiked).then((newCard) => {
+      setInitialCards((state) =>
+        state.map((c) => (c._id === card._id ? newCard : c))
+      );
+    });
+  }
+
+  function onCardDelete(card) {
+    api.deleteCard(card._id).then((newCards) => {
+      setInitialCards((state) =>
+        state.filter((c) => (c._id === card._id ? newCards : c))
+      );
     });
   }
 
@@ -99,9 +107,6 @@ function App() {
         <CurrentUserContext.Provider value={currentUser}>
           <Header />
           <Main
-            // userName={CurrentUser.name}
-            // userDescription={CurrentUser.about}
-            // userAvatar={CurrentUser.avatar}
             handleEditProfileClick={onEditProfileClick}
             handleAddPlaceClick={onAddPlaceClick}
             handleEditAvatarClick={onEditAvatarClick}
@@ -110,13 +115,15 @@ function App() {
               {initialCards.map((card) => {
                 return (
                   <Card
+                    card={card}
                     cardLikes={card.likes}
                     cardOwnerId={card.owner._id}
                     cardName={card.name}
                     cardImage={card.link}
                     cardCounter={card.likes.length}
                     Key={card._id}
-                    handleDeleteCard={onDeleteCardClick}
+                    handleCardDelete={onCardDelete}
+                    // handleDeleteClick={onDeleteCardClick}
                     handleCardClick={onImageCardClick}
                     handleCardLike={onCardLike}
                   ></Card>

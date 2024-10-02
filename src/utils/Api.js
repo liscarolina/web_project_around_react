@@ -129,6 +129,14 @@ class Api {
       });
   }
 
+  handleCardLike(cardId, isLiked) {
+    if (isLiked) {
+      return this.deleteCardLike(cardId);
+    } else {
+      return this.addCardLike(cardId);
+    }
+  }
+
   changeAvatar(link) {
     return fetch(`${this.baseUrl}/users/me/avatar`, {
       method: "PATCH",
