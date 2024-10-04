@@ -14,13 +14,16 @@ function Popup(props) {
           <img className="popup__icon" src={popupCloseIcon} alt="Cerrar" />
         </button>
         <h2 className="popup__title">{props.title}</h2>
-        <form className="popup__form" autoComplete="off">
+        <form
+          className="popup__form"
+          autoComplete="off"
+          onSubmit={props.onSubmit}
+        >
           <fieldset className="popup__name">
             {props.children}
             <button
               className="popup__button popup__button_type_send"
               type="submit"
-              onClick={props.onSubmit}
             >
               {props.buttonName}
             </button>
