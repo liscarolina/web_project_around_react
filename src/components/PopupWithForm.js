@@ -48,7 +48,6 @@ function PopupWithForm(props) {
             <button
               className="popup__button popup__button_type_send"
               type="submit"
-              // onClick={props.onSubmit}
             >
               {props.buttonName}
             </button>

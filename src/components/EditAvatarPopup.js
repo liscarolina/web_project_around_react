@@ -1,38 +1,35 @@
 import React from "react";
 import Popup from "./Popup.js";
-// import CurrentUserContext from "./contexts/CurrentUserContext.js";
-import { useState } from "react";
+import { useRef } from "react";
 
-function EditAvatarPopup({ title, onClose, isOpen, onChangeInput }) {
-  const [avatarState, setAvatarState] = useState({
-    link: "",
-  });
+function EditAvatarPopup({ title, onClose, isOpen, onUpdateAvatar }) {
+  const inputRef = useRef();
 
-  const handleOnChangeInput = (evt) => {
-    setAvatarState((state) => ({
-      ...state,
-      [evt.target.name]: evt.target.value,
-    }));
-  };
+  function handleSubmit(e) {
+    e.preventDefault();
+    onUpdateAvatar({
+      link: inputRef.current.value,
+    });
+  }
 
   return (
     <Popup
       id="avatar-popup"
       title={title}
       buttonName="Guardar"
-      onSubmit={() => null}
+      onSubmit={handleSubmit}
       onClose={onClose}
       isOpen={isOpen}
+      onUpdateAvatar={onUpdateAvatar}
     >
       <input
         className="popup__item popup__item_type_about"
         id="link-input"
         type="url"
         name="link"
+        ref={inputRef}
         placeholder="Enlace a la imagen"
-        value={avatarState.link}
         required
-        onChange={handleOnChangeInput}
       />
       <span className="popup__error popup__error-link"></span>
     </Popup>

@@ -5,7 +5,6 @@ import "../src/blocks/Elements.css";
 import Header from "./components/Header.js";
 import Main from "./components/Main.js";
 import Footer from "./components/Footer.js";
-import PopupWithForm from "./components/PopupWithForm.js";
 import Popup from "./components/Popup.js";
 import api from "./utils/Api.js";
 import Card from "./components/Card.js";
@@ -13,6 +12,7 @@ import ImagePopup from "./components/ImagePopup.js";
 import CurrentUserContext from "./components/contexts/CurrentUserContext.js";
 import EditAvatarPopup from "./components/EditAvatarPopup.js";
 import EditProfilePopup from "./components/EditProfilePopup.js";
+import AddPlacePopup from "./components/AddPlacePopup.js";
 
 function App() {
   const [initialCards, setInitialCards] = useState([]);
@@ -33,17 +33,6 @@ function App() {
     setInitialCards(initialCards);
   }
 
-  const [profileState, setProfileState] = useState({
-    name: "",
-    about: "",
-  });
-
-  // React.useEffect(() => {
-  //   setProfileState(currentUser.name);
-  //   setProfileState(currentUser.description);
-  // }, [currentUser]);
-
-  // const [profilePopupIsOpened, profileSetPopoupIsOpened] = useState(false);
   const [isEditProfilePopupOpened, setIsEditProfilePopupOpened] =
     useState(false);
   const [addCardPopupIsOpened, addCardSetPopoupIsOpened] = useState(false);
@@ -53,19 +42,7 @@ function App() {
     useState(false);
   const [imageCardPopupIsOpened, imageCardSetPopoupIsOpened] = useState(false);
 
-  // const handleOnChangeInput = (evt) => {
-  //   setProfileState((state) => ({
-  //     ...state,
-  //     [evt.target.name]: evt.target.value,
-  //   }));
-  // };
-
-  // function onCounterCardClick() {
-  //   setCounter(counter + 1);
-  // }
-
   function onEditProfileClick() {
-    // profileSetPopoupIsOpened(true);
     setIsEditProfilePopupOpened(true);
   }
 
@@ -88,8 +65,7 @@ function App() {
 
   function closeAllPopups() {
     imageCardSetPopoupIsOpened(false);
-    deleteCardSetPopoupIsOpened(false);
-    // profileSetPopoupIsOpened(false);
+    // deleteCardSetPopoupIsOpened(false);
     setIsEditProfilePopupOpened(false);
     editAvatarSetPopoupIsOpened(false);
     addCardSetPopoupIsOpened(false);
@@ -119,6 +95,20 @@ function App() {
         setUserInfo((state) => ({ ...state, name: name, about: about }))
       );
     setIsEditProfilePopupOpened(false);
+  }
+
+  function handleUpdateAvatar({ link }) {
+    api
+      .changeAvatar(link)
+      .then(() => setUserInfo((state) => ({ ...state, avatar: link })));
+    editAvatarSetPopoupIsOpened(false);
+  }
+
+  function handleAddPlaceSubmit(newCard) {
+    api
+      .createCard(newCard.name, newCard.link)
+      .then((cardResponse) => setInitialCards([cardResponse, ...initialCards]));
+    addCardSetPopoupIsOpened(false);
   }
 
   return (
@@ -162,51 +152,14 @@ function App() {
             title="Cambiar foto de perfil"
             isOpen={editAvatarPopupIsOpened}
             onClose={closeAllPopups}
-            onUpdateAvatar={() => null}
+            onUpdateAvatar={handleUpdateAvatar}
           />
 
-          {/* <PopupWithForm
-            id="profile"
-            title="Editar Perfil"
-            buttonName="Guardar"
-            inputFirst={{
-              type: "text",
-              name: "name",
-              placeholder: "Nombre",
-              value: profileState.name,
-            }}
-            inputSecond={{
-              type: "text",
-              name: "about",
-              placeholder: "Acerca de mí",
-              value: profileState.about,
-            }}
-            onChangeInput={handleOnChangeInput}
-            onSubmit={() => null}
-            onClose={closeAllPopups}
-            isOpen={profilePopupIsOpened}
-          /> */}
-
-          <PopupWithForm
-            id="add-popup"
+          <AddPlacePopup
             title="Nuevo Lugar"
-            buttonName="Guardar"
-            inputFirst={{
-              type: "text",
-              name: "place",
-              placeholder: "Título",
-              value: profileState.place,
-            }}
-            inputSecond={{
-              type: "url",
-              name: "link",
-              placeholder: "Enlace a la imagen",
-              value: profileState.link,
-            }}
-            // onChangeInput={handleOnChangeInput}
-            onSubmit={() => null}
-            onClose={closeAllPopups}
             isOpen={addCardPopupIsOpened}
+            onClose={closeAllPopups}
+            onAddCard={handleAddPlaceSubmit}
           />
           <Popup
             id="delete-popup"
@@ -216,26 +169,6 @@ function App() {
             onClose={closeAllPopups}
             isOpen={deleteCardPopupIsOpened}
           />
-          {/* <Popup
-            id="avatar-popup"
-            title="Cambiar foto de perfil"
-            buttonName="Guardar"
-            // onChangeInput={handleOnChangeInput}
-            onSubmit={() => null}
-            onClose={closeAllPopups}
-            isOpen={editAvatarPopupIsOpened}
-          >
-            <input
-              className="popup__item popup__item_type_about"
-              id="link-input"
-              type="url"
-              name="link"
-              placeholder="Enlace a la imagen"
-              value={profileState.link}
-              required
-            />
-            <span className="popup__error popup__error-link"></span>
-          </Popup> */}
           <ImagePopup
             id="popup_image"
             name={currentCard.name}

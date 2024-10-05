@@ -6,7 +6,7 @@ import CurrentUserContext from "./contexts/CurrentUserContext";
 
 function Main(props) {
   const CurrentUser = React.useContext(CurrentUserContext);
-  // const avatarRef = React.useRef;
+
   return (
     <main className="content">
       <section className="profile">
@@ -14,7 +14,6 @@ function Main(props) {
           <img
             className="profile__avatar"
             src={CurrentUser.avatar}
-            // ref={avatarRef}
             alt="Imagen de Jacques Costeau"
             onClick={props.handleEditAvatarClick}
           />
